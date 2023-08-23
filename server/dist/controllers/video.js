@@ -10,17 +10,44 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import User from '../models/user.js';
 import Video from '../models/video.js';
 import { createError } from '../restFunctions/error.js';
+import { z } from 'zod';
+const addVideoBodySchema = z.object({
+    channelName: z.string().min(1),
+    title: z.string().min(1),
+    description: z.string().min(1),
+    thumbnailUrl: z.string().min(1),
+    thumbnailName: z.string().min(1),
+    videoURL: z.string().min(1),
+    videoName: z.string().min(1),
+    views: z.number().optional(),
+    tags: z.array(z.string()).optional(),
+    likes: z.array(z.string()).optional(),
+    dislikes: z.array(z.string()).optional()
+});
+const updateVideoBodySchema = z.object({
+    title: z.string().min(1).optional(),
+    description: z.string().min(1).optional(),
+    thumbnailURL: z.string().min(1).optional(),
+    thumbnailName: z.string().min(1).optional(),
+    videoURL: z.string().min(1).optional(),
+    videoName: z.string().min(1).optional(),
+    tags: z.array(z.string()).optional()
+});
 export const addVideo = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     if (!req.user) {
         return next(createError(403, 'You are not authorized...'));
     }
     try {
-        const body = req.body;
+        const body = addVideoBodySchema.parse(req.body);
         const newVideo = new Video(Object.assign({ userId: req.user.id }, body));
         const savedVideo = yield newVideo.save();
         res.status(200).json(savedVideo);
     }
     catch (err) {
+        if (err instanceof z.ZodError) {
+            res.json(err.issues[0].message);
+            return;
+        }
         next(err);
     }
 });
@@ -33,7 +60,7 @@ export const updateVideo = (req, res, next) => __awaiter(void 0, void 0, void 0,
         if (!video)
             return next(createError(401, 'Video not found'));
         if (video.userId === req.user.id) {
-            const body = req.body;
+            const body = updateVideoBodySchema.parse(req.body);
             const updatedVideo = yield Video.findByIdAndUpdate(req.params.videoId, {
                 $set: body
             }, { new: true });

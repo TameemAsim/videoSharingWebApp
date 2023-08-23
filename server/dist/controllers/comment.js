@@ -7,9 +7,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+import { z } from 'zod';
 import Comment from '../models/comment.js';
 import Video from '../models/video.js';
 import { createError } from "../restFunctions/error.js";
+const addCommentSchema = z.object({
+    username: z.string().min(1),
+    videoId: z.string().min(1),
+    desc: z.string().min(1)
+});
 export const getComments = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const comments = yield Comment.find({ videoId: req.params.videoId }).sort({ createdAt: -1 });
@@ -24,7 +30,7 @@ export const addComment = (req, res, next) => __awaiter(void 0, void 0, void 0, 
         return next(createError(403, 'You are not authorized...'));
     }
     try {
-        const body = req.body;
+        const body = addCommentSchema.parse(req.body);
         const comment = new Comment(Object.assign({ userId: req.user.id }, body));
         yield comment.save();
         res.status(201).json(comment);

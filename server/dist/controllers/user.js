@@ -11,13 +11,33 @@ import User from "../models/user.js";
 import Video from '../models/video.js';
 import { createError } from "../restFunctions/error.js";
 import bcrypt from 'bcrypt';
+import { z } from "zod";
+const updateUserBodySchema = z.object({
+    username: z.string().min(1).optional(),
+    email: z.string().min(1).email().optional(),
+    img: z.string().min(1).optional(),
+    imgName: z.string().min(1).optional(),
+    subscribers: z.string().min(1).optional(),
+    subscribedUsers: z.array(z.string()).optional()
+});
+const changePasswordBodySchema = z.object({
+    password: z.string().min(6).max(15).refine((value) => {
+        // Regular expressions to check for different character types
+        const hasUppercase = /[A-Z]/.test(value);
+        const hasLowercase = /[a-z]/.test(value);
+        const hasNumber = /[0-9]/.test(value);
+        const hasSpecialChar = /[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]/.test(value);
+        // Ensure all required conditions are met
+        return hasUppercase && hasLowercase && hasNumber && hasSpecialChar;
+    }, 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character')
+});
 export const update = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     if (!req.user) {
         return next(createError(403, 'You are not authorized...'));
     }
     if (req.params.userId === req.user.id) {
         try {
-            const body = req.body;
+            const body = updateUserBodySchema.parse(req.body);
             const user = yield User.findByIdAndUpdate(req.params.userId, {
                 $set: body,
             }, { new: true });
@@ -140,7 +160,7 @@ export const changePassword = (req, res, next) => __awaiter(void 0, void 0, void
     }
     if (req.params.userId === req.user.id) {
         try {
-            const body = req.body;
+            const body = changePasswordBodySchema.parse(req.body);
             const hashedPassword = yield bcrypt.hash(body.password, 5);
             const hashedPasswordBody = { password: hashedPassword };
             yield User.findByIdAndUpdate(req.params.userId, {
