@@ -22,3 +22,12 @@ jobs:
         mkdir -p ~/.ssh
         cp known_hosts ~/.ssh/known_hosts
         ssh -t -i keyfile ubuntu@ec2-13-51-109-92.eu-north-1.compute.amazonaws.com "sudo bash ~/deploy.sh"
+
+    - name: Create and Upload .env File
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        ENV_CONTENT: ${{ secrets.ENVIRONMENT_VARS_FOR_BACKEND }}
+      run: |
+        echo "$SSH_PRIVATE_KEY" > keyfile
+        chmod 600 keyfile
+        ssh -i keyfile ubuntu@ec2-13-51-109-92.eu-north-1.compute.amazonaws.com "echo '$ENV_CONTENT' | sudo tee ~/videoSharingWebApp/server/.env"
