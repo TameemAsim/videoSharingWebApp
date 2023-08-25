@@ -10,7 +10,7 @@ import errorHandler from "./middlewares/errorHandler.js";
 import cors from 'cors';
 const app = express();
 dotenv.config();
-const port = 5001;
+const port = 5000;
 const connect = () => {
     if (!process.env.DBURL) {
         return console.log('DBURL not found...');
