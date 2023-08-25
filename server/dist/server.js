@@ -10,7 +10,7 @@ import errorHandler from "./middlewares/errorHandler.js";
 import cors from 'cors';
 const app = express();
 dotenv.config();
-const port = 5000;
+const port = 5001;
 const connect = () => {
     if (!process.env.DBURL) {
         return console.log('DBURL not found...');
@@ -29,7 +29,7 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 app.get('/', (req, res) => {
-    res.send('Welcome to Tameem HOme.');
+    res.send('Welcome!');
 });
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
