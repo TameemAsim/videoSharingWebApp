@@ -1,9 +1,8 @@
 {
   "name": "client1",
   "version": "0.1.0",
-  "homepage": ".",
   "private": true,
-  "proxy": "http://ec2-13-53-61-100.eu-north-1.compute.amazonaws.com:5000/api",
+  "proxy": "http://ec2-13-51-204-32.eu-north-1.compute.amazonaws.com:5000/api",
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
