@@ -1,6 +1,7 @@
 {
   "name": "client1",
   "version": "0.1.0",
+  "homepage": ".",
   "private": true,
   "proxy": "http://ec2-13-51-204-32.eu-north-1.compute.amazonaws.com:5000/api",
   "dependencies": {
