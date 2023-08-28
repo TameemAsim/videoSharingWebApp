@@ -7,6 +7,7 @@ import videoRoutes from "./routes/videos.js";
 import authRoutes from "./routes/auths.js";
 import cookieParser from "cookie-parser";
 import errorHandler from "./middlewares/errorHandler.js";
+import cors from 'cors';
 import path from "path";
 import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
@@ -26,10 +27,7 @@ const connect = () => {
     });
 };
 connect();
-// app.use(cors({
-//     origin: true,
-//     credentials: true
-// }));
+app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
 app.use('/api/auth', authRoutes);
