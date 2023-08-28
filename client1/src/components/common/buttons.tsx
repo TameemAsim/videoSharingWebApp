@@ -2,8 +2,9 @@ import React from "react";
 import Cookies from "js-cookie";
 import { User, user } from '../../recoil/atoms';
 import { useRecoilState } from "recoil";
-import Axios from 'axios';
+import Axios, { isAxiosError } from 'axios';
 import proxy from "../../proxy";
+import { useNavigate } from "react-router-dom";
 
 interface IconButtonProps {
     onClick: (ev: React.MouseEvent) => void,
@@ -63,58 +64,94 @@ interface SubscribeButtonProps {
 
 export function SubscribeButton({ channelId }: SubscribeButtonProps) {
     const [userLoggedIn, setUserLoggedIn] = useRecoilState(user);
+    const navigate = useNavigate();
 
 
     function handleSubscribeClick() {
         Axios.put(`${proxy}/users/sub/${channelId}`, {}, {withCredentials: true})
             .then(response => {
-                if (response.data === 'Subscription successful...') {
+                try {
+                    if (response.data === 'Subscription successful...') {
                     
-                    setUserLoggedIn((prevLoggedInUser) => {
-                        return {
-                            ...prevLoggedInUser,
-                            subscribedUsers: [...prevLoggedInUser.subscribedUsers, channelId]
+                        setUserLoggedIn((prevLoggedInUser) => {
+                            return {
+                                ...prevLoggedInUser,
+                                subscribedUsers: [...prevLoggedInUser.subscribedUsers, channelId]
+                            }
+                        });
+                    } else {
+                        alert('An error occured... Please try later');
+                    }
+                } catch (error) {
+                    if (isAxiosError(error)){
+                        if (error.response) {
+                            if (error.response.data.message === 'You are not authorized') {
+                                alert('Kindly login first.');
+                                navigate('/');
+                            } else {
+                                console.log(error.response);
+                            }
+                        } else if (error.request) {
+                            console.log('Request failed... Please refresh the page.');
+                        } else {
+                            console.log('An error occured... Please refresh the page.');
                         }
-                    });
-                } else {
-                    alert('An error occured... Please try later');
+                    }else {
+                        alert('An error occured... PLease try again.')
+                    }
                 }
+                
             })
-            .catch(err => {
-                alert(`An occured... ${err.message}`);
-            })
+            
     }
 
 
     function handleUnsubscribeClick() {
         Axios.put(`${proxy}/users/unsub/${channelId}`, {}, {withCredentials: true})
             .then(response => {
-                if (response.data === "Unsubscribed Successfully...") {
+                try {
+                    if (response.data === "Unsubscribed Successfully...") {
                     
-                    setUserLoggedIn((prevLoggedInUser) => {
-                        const subscribedUsersList = prevLoggedInUser.subscribedUsers;
-                        
-                        return {
-                            ...prevLoggedInUser,
-                            subscribedUsers: subscribedUsersList.filter(item => item !== channelId)
+                        setUserLoggedIn((prevLoggedInUser) => {
+                            const subscribedUsersList = prevLoggedInUser.subscribedUsers;
+                            
+                            return {
+                                ...prevLoggedInUser,
+                                subscribedUsers: subscribedUsersList.filter(item => item !== channelId)
+                            }
+                        });
+                    } else {
+                        alert('An error occured... Please try later');
+                    }
+                } catch (error) {
+                    if (isAxiosError(error)){
+                        if (error.response) {
+                            if (error.response.data.message === 'You are not authorized') {
+                                alert('Kindly login first.');
+                                navigate('/');
+                            } else {
+                                console.log(error.response);
+                            }
+                        } else if (error.request) {
+                            console.log('Request failed... Please refresh the page.');
+                        } else {
+                            console.log('An error occured... Please refresh the page.');
                         }
-                    });
-                } else {
-                    alert('An error occured... Please try later');
+                    }else {
+                        alert('An error occured... PLease try again.')
+                    }
                 }
+                
             })
-            .catch(err => {
-                alert(`An occured... ${err.message}`);
-            });
     }
 
 
     return (
         <div>
-            <button className={userLoggedIn.subscribedUsers.includes(channelId) ? 'hidden' : 'bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 w-28 rounded-full'} onClick={ev => { ev.preventDefault(); handleSubscribeClick(); }}>
+            <button className={userLoggedIn.subscribedUsers.includes(channelId) ? 'hidden' : 'bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 w-28 rounded-full'} onClick={ev => { ev.preventDefault(); Cookies.get('access_token') ? handleSubscribeClick() : navigate('/signIn');}}>
                 Subscribe
             </button>
-            <button className={userLoggedIn.subscribedUsers.includes(channelId) ? 'bg-white border-2 border-black hover:bg-slate-200 text-black font-bold py-2 px-4 w-30 rounded-full text-center' : 'hidden'} onClick={ev => { ev.preventDefault(); handleUnsubscribeClick(); }} >
+            <button className={userLoggedIn.subscribedUsers.includes(channelId) ? 'bg-white border-2 border-black hover:bg-slate-200 text-black font-bold py-2 px-4 w-30 rounded-full text-center' : 'hidden'} onClick={ev => { ev.preventDefault(); Cookies.get('access_token') ? handleUnsubscribeClick() : navigate('/signIn');}} >
                 Unsubscribe
             </button>
         </div>
