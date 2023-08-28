@@ -187,7 +187,7 @@ export default function UploadVideoPage() {
                                 return updatedUserVideos;
                             });
                             alert('Video Uploaded Successfully...');
-                            navigate('/account');
+                            navigate('/');
                         }
                         
                     }
