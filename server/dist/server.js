@@ -32,9 +32,6 @@ connect();
 // }));
 app.use(express.json());
 app.use(cookieParser());
-// app.get('/', (req, res) => {
-//     res.send('Welcome!');
-// })
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/videos', videoRoutes);
@@ -43,7 +40,6 @@ app.use(express.static("public"));
 app.get('/*', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/index.html'));
 });
-// Error Handler
 app.use(errorHandler);
 app.listen(port, () => {
     console.log('Server started on port 5000.');

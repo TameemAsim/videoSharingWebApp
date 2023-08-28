@@ -3,6 +3,7 @@ import Cookies from "js-cookie";
 import { User, user } from '../../recoil/atoms';
 import { useRecoilState } from "recoil";
 import Axios from 'axios';
+import proxy from "../../proxy";
 
 interface IconButtonProps {
     onClick: (ev: React.MouseEvent) => void,
@@ -65,7 +66,7 @@ export function SubscribeButton({ channelId }: SubscribeButtonProps) {
 
 
     function handleSubscribeClick() {
-        Axios.put(`http://localhost:5000/api/users/sub/${channelId}`, {}, {withCredentials: true})
+        Axios.put(`${proxy}/users/sub/${channelId}`, {}, {withCredentials: true})
             .then(response => {
                 if (response.data === 'Subscription successful...') {
                     
@@ -86,7 +87,7 @@ export function SubscribeButton({ channelId }: SubscribeButtonProps) {
 
 
     function handleUnsubscribeClick() {
-        Axios.put(`http://localhost:5000/api/users/unsub/${channelId}`, {}, {withCredentials: true})
+        Axios.put(`${proxy}/users/unsub/${channelId}`, {}, {withCredentials: true})
             .then(response => {
                 if (response.data === "Unsubscribed Successfully...") {
                     

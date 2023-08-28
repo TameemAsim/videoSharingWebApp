@@ -36,12 +36,10 @@ connect();
 //     origin: true,
 //     credentials: true
 // }));
+
 app.use(express.json());
 app.use(cookieParser());
 
-// app.get('/', (req, res) => {
-//     res.send('Welcome!');
-// })
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/videos', videoRoutes);
@@ -51,7 +49,7 @@ app.get('/*', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/index.html'));
 });
 
-// Error Handler
+
 app.use(errorHandler);
 
 
