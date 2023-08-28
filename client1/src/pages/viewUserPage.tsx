@@ -4,6 +4,7 @@ import Axios, { isAxiosError } from 'axios';
 import { useRecoilState } from "recoil";
 import ViewUser from "../components/Major Components/viewUser";
 import Header from "../components/layout/header";
+import proxy from "../proxy";
 
 export default function ViewUserPage() {
     const { userId } = useParams();
@@ -21,10 +22,10 @@ export default function ViewUserPage() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const User = await Axios.get(`/users/find/${userId}`);
+                const User = await Axios.get(`${proxy}/users/find/${userId}`);
                 if (User) {
                     setChannel(User.data);
-                    const UserVideos = await Axios.get(`/videos/allVideos/${userId}`);
+                    const UserVideos = await Axios.get(`${proxy}/videos/allVideos/${userId}`);
                     setChannelVideos(UserVideos.data);
                 }
             } catch (err) {

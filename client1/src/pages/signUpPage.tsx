@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import SignUpComponent from "../components/Major Components/signUpComponent";
 import Axios, { isAxiosError } from 'axios';
+import proxy from "../proxy";
 
 export default function SignUpPage() {
     const [username, setUsername] = useState('');
@@ -34,7 +35,7 @@ export default function SignUpPage() {
     async function handleSignUp(ev: React.MouseEvent) {
         ev.preventDefault();
         try {
-            const response = await Axios.post('/auth/signup', { username, email, password }, { withCredentials: true });
+            const response = await Axios.post(`${proxy}/auth/signup`, { username, email, password }, { withCredentials: true });
             if (response) {
                 if ((response.status === 200) && (response.data === 'User Created Successfully...')) {
                     alert('Account Created Successfully... Please Login');

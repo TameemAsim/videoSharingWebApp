@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Axios, { isAxiosError } from 'axios';
 import Home from '../components/Major Components/home';
+import proxy from '../proxy';
 
 
 export default function HomePage() {
@@ -9,7 +10,7 @@ export default function HomePage() {
     useEffect(() => {
         const fetchVideos = async () => {
             try {
-                const response = await Axios.get('/videos/random');
+                const response = await Axios.get(`${proxy}/videos/random`);
                 if(response) {
                     setVideos(response.data);
                 }

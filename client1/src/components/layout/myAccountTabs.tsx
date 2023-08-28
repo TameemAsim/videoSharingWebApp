@@ -6,6 +6,7 @@ import { storage } from "../../firebase";
 import { ref, uploadBytesResumable, getDownloadURL, deleteObject } from "firebase/storage";
 import Axios, { AxiosError } from "axios";
 import { VideoCard } from "../common/cards";
+import proxy from "../../proxy";
 
 
 export default function MyAccountTabs() {
@@ -94,7 +95,7 @@ export default function MyAccountTabs() {
                     }
 
 
-                    Axios.put(`/users/${userLoggedIn._id}`, { img: url, imgName: profilePhotoFile.name }, { withCredentials: true })
+                    Axios.put(`${proxy}/users/${userLoggedIn._id}`, { img: url, imgName: profilePhotoFile.name }, { withCredentials: true })
                         .then(response => {
                             const user = response.data
                             delete user.password;
@@ -115,7 +116,7 @@ export default function MyAccountTabs() {
         try {
             console.log('Profile data sent: ' + profileData);
 
-            const response = await Axios.put(`/users/${userLoggedIn._id}`, profileData, { withCredentials: true });
+            const response = await Axios.put(`${proxy}/users/${userLoggedIn._id}`, profileData, { withCredentials: true });
             if (response) {
                 const user = response.data;
                 delete user.password;
@@ -218,7 +219,7 @@ export default function MyAccountTabs() {
                     <div data-username="Change Password Button" className="flex my-2 justify-center">
                         <button className="w-44 h-7 pb-2 bg-orange-500 text-white rounded-lg sm:text-md md:text-lg font-semibold hover:text-orange-500 hover:border hover:border-orange-500 hover:bg-white mr-2" onClick={ev => {
                             ev.preventDefault();
-                            Axios.put(`/users/changePassword/${userLoggedIn._id}`, { password: newPassword }, { withCredentials: true })
+                            Axios.put(`${proxy}/users/changePassword/${userLoggedIn._id}`, { password: newPassword }, { withCredentials: true })
                                 .then(response => {
                                     if (response.data === 'Password Successfully Changed') {
                                         alert(response.data);

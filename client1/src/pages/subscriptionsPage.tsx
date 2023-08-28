@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Axios, { isAxiosError } from 'axios';
 import Home from '../components/Major Components/home';
+import proxy from '../proxy';
 
 
 export default function SubscriptionVideosPage() {
@@ -9,7 +10,7 @@ export default function SubscriptionVideosPage() {
     useEffect(() => {
         const fetchVideos = async () => {
             try {
-                const response = await Axios.get('/videos/sub', {withCredentials: true});
+                const response = await Axios.get(`${proxy}/videos/sub`, {withCredentials: true});
                 if(response) {
                     setVideos(response.data);
                 }

@@ -221,13 +221,13 @@ export function SideVideoCard({video}: Props) {
     }, []);
     
     return (
-        <div className="flex flex-row sm:w-full md:w-[85%] mx-auto bg-gray-200 rounded-md p-1 cursor-pointer" onClick={ev => {ev.preventDefault(); navigate(`/viewVideo/${video._id}/${video.createdAt}`)}} >
-            <div className="basis-1/2 my-auto rounded-md">
+        <div className="flex flex-row sm:w-full md:w-[85%] mx-auto mt-1 mb-1 bg-gray-200 rounded-md p-1 cursor-pointer" onClick={ev => {ev.preventDefault(); navigate(`/viewVideo/${video._id}/${video.createdAt}`); window.location.reload();}} >
+            <div className="basis-1/2 my-auto rounded-md" onClick={ev => {ev.preventDefault(); navigate(`/viewVideo/${video._id}/${video.createdAt}`); window.location.reload();}}>
                 <img className="rounded-md" src={video.thumbnailURL} alt="Thumbnail Image" />
             </div>
-            <div className="basis-1/2 pl-2 my-auto">
+            <div className="basis-1/2 pl-2 my-auto" onClick={ev => {ev.preventDefault(); navigate(`/viewVideo/${video._id}/${video.createdAt}`); window.location.reload();}}>
                 <h1 className="md:text-xs lg:text-sm font-semibold whitespace-normal truncate line-clamp-2">{video.title}</h1>
-                <h1 className="md:text-xs lg:text-sm font-normal underline" onClick={ev => {ev.preventDefault(); ev.stopPropagation(); navigate(`/viewUser/${video.userId}`)}} >{video.channelName}</h1>
+                <h1 className="md:text-xs lg:text-sm font-normal underline"  >{video.channelName}</h1>
                 <div className="w-full flex">
                     <h1 className="md:text-[8px] lg:text-xs font-medium">{video.views} views</h1>
                     <h1 className="md:text-[8px] lg:text-xs font-medium">&nbsp;&nbsp;|&nbsp;&nbsp;{timeDifference} ago</h1>

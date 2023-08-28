@@ -6,6 +6,7 @@ import { ref, deleteObject } from "firebase/storage";
 import { storage } from "../firebase";
 import { userVideos } from "../recoil/atoms";
 import Header from "../components/layout/header";
+import proxy from "../proxy";
 
 export default function DeleteVideoPage() {
     const [userLoggedInVideos, setUserLoggedInVideos] = useRecoilState(userVideos);
@@ -16,7 +17,7 @@ export default function DeleteVideoPage() {
     useEffect(() => {
         const executeAllFunctions = async () => {
             try {
-                const videoResponse = await Axios.get(`/videos/find/${videoId}`);
+                const videoResponse = await Axios.get(`${proxy}/videos/find/${videoId}`);
                 if (videoResponse.data) {
                     const fetchedVideo = videoResponse.data;
                     const thumbnailRef = ref(storage, `files/${fetchedVideo.thumbnailName}`);
@@ -28,7 +29,7 @@ export default function DeleteVideoPage() {
                     await deleteObject(videoRef);
                     console.log('Video Deleted...');
 
-                    const deleteDataFromDB = await Axios.delete(`/videos/${fetchedVideo._id}`);
+                    const deleteDataFromDB = await Axios.delete(`${proxy}/videos/${fetchedVideo._id}`);
                     if (deleteDataFromDB.data) {
                         setUserLoggedInVideos(deleteDataFromDB.data);
                         console.log('Data deleted from DB...');

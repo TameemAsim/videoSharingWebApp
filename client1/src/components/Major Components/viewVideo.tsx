@@ -6,6 +6,7 @@ import { SubscribeButton } from "../common/buttons";
 import { useRecoilState } from "recoil";
 import { User, Video, user } from "../../recoil/atoms";
 import { SideVideoCard } from "../common/cards";
+import proxy from '../../proxy';
 
 interface Comment {
     _id: string,
@@ -35,14 +36,14 @@ export default function ViewVideo() {
     useEffect(() => {
         const fetchVideo = async () => {
             try {
-                const response = await Axios.get(`/videos/find/${videoId}`);
+                const response = await Axios.get(`${proxy}/videos/find/${videoId}`);
                 if (response) {
                     setVideo(response.data);
-                    const user = await Axios.get(`/users/find/${response.data.userId}`);
+                    const user = await Axios.get(`${proxy}/users/find/${response.data.userId}`);
                     if (user) {
                         setChannel(user.data);
                     }
-                    const comments = await Axios.get(`/comments/${response.data._id}`);
+                    const comments = await Axios.get(`${proxy}/comments/${response.data._id}`);
                     if (comments) {
                         setComments(comments.data);
                     }
@@ -69,7 +70,7 @@ export default function ViewVideo() {
 
         const fetchRecommendedVideos = async () => {
             try {
-                const response = await Axios.get('/videos/random');
+                const response = await Axios.get(`${proxy}/videos/random`);
                 if (response) {
                     setRecommendedVideos(response.data);
                 }
@@ -127,8 +128,7 @@ export default function ViewVideo() {
             const endTime: number = window.performance.now();
             const timeSpent = endTime - timeSpentOnThisVideo;
 
-            if(endTime >= 5000) {
-                Axios.put(`/videos/view/${videoId}`)
+                Axios.put(`${proxy}/videos/view/${videoId}`)
                 .then(response => {
                     if(response.data.status === 201) {
                         console.log('View added to video.');
@@ -138,7 +138,7 @@ export default function ViewVideo() {
                 }).catch(err => {
                     console.log('Some frontend error occured: ', err.message);
                 });
-            }
+
 
         }, 5000);
 
@@ -249,7 +249,7 @@ export default function ViewVideo() {
                                 <button name='like button' className={`${video.likes.includes(userLoggedIn._id) ? 'hidden' : ''} mt-1 p-1 rounded-3xl w-20 border-2 border-red-500 `} onClick={async (ev) => {
                                     ev.preventDefault();
                                     try {
-                                        const response = await Axios.put(`/users/like/${video._id}`);
+                                        const response = await Axios.put(`${proxy}/users/like/${video._id}`, {}, {withCredentials: true});
                                         if (response) {
 
                                             setVideo((prevVideo) => {
@@ -286,7 +286,7 @@ export default function ViewVideo() {
                                 <button name='dislike button' className={`${video.dislikes.includes(userLoggedIn._id) ? 'hidden' : ''} mt-1 ml-2 p-1 rounded-3xl w-20 border-2 border-red-500 `} onClick={async (ev) => {
                                     ev.preventDefault();
                                     try {
-                                        const response = await Axios.put(`/users/dislike/${video._id}`);
+                                        const response = await Axios.put(`${proxy}/users/dislike/${video._id}`, {}, {withCredentials: true});
                                         if (response) {
                                             setVideo((prevVideo) => {
                                                 if (prevVideo) {
@@ -351,7 +351,7 @@ export default function ViewVideo() {
                                 <button className="p-1 bg-black rounded-md text-white text-md font-semibold" onClick={async (ev) => {
                                     ev.preventDefault();
                                     try {
-                                        const response = await Axios.post(`/comments/`, { username: userLoggedIn.username, videoId, desc: commentTyped }, { withCredentials: true });
+                                        const response = await Axios.post(`${proxy}/comments/`, { username: userLoggedIn.username, videoId, desc: commentTyped }, { withCredentials: true });
                                         if (response) {
                                             setComments(prevValues => {
                                                 return [response.data, ...prevValues]
@@ -408,7 +408,7 @@ export default function ViewVideo() {
                                 <button name='like button' className={`${video.likes.includes(userLoggedIn._id) ? 'hidden' : ''} mt-1 p-1 rounded-3xl w-20 border-2 border-red-500 `} onClick={async (ev) => {
                                     ev.preventDefault();
                                     try {
-                                        const response = await Axios.put(`/users/like/${video._id}`);
+                                        const response = await Axios.put(`${proxy}/users/like/${video._id}`);
                                         if (response) {
                                             setVideo((prevVideo) => {
                                                 if (prevVideo) {
@@ -443,7 +443,7 @@ export default function ViewVideo() {
                                 <button name='dislike button' className={`${video.dislikes.includes(userLoggedIn._id) ? 'hidden' : ''} mt-1 ml-2 p-1 rounded-3xl w-20 border-2 border-red-500 `} onClick={async (ev) => {
                                     ev.preventDefault();
                                     try {
-                                        const response = await Axios.put(`/users/dislike/${video._id}`);
+                                        const response = await Axios.put(`${proxy}/users/dislike/${video._id}`);
                                         if (response) {
                                             setVideo((prevVideo) => {
                                                 if (prevVideo) {
@@ -501,7 +501,7 @@ export default function ViewVideo() {
                                 <button className="p-1 bg-black rounded-md text-white text-md font-semibold" onClick={async (ev) => {
                                     ev.preventDefault();
                                     try {
-                                        const response = await Axios.post(`/comments/`, { username: userLoggedIn.username, videoId, desc: commentTyped }, { withCredentials: true });
+                                        const response = await Axios.post(`${proxy}/comments/`, { username: userLoggedIn.username, videoId, desc: commentTyped }, { withCredentials: true });
                                         if (response) {
                                             setComments(prevValues => {
                                                 return [response.data, ...prevValues]
@@ -529,7 +529,9 @@ export default function ViewVideo() {
                                 </div>
                             </div>
                             <div className="w-full">
-                                <SideVideoCard video={video} />
+                                {recommendedVideos && recommendedVideos.map(video => {
+                                    return <SideVideoCard video={video} />
+                                })}
                             </div>
                         </div>
                     </div>
@@ -559,15 +561,17 @@ function ShareOptions({ textToShare }: { textToShare: string }) {
 
     const handleEmailShare = () => {
         const subject = "Shared via React App";
+        const url = window.location.href;
         const mailtoLink = `mailto:?subject=${encodeURIComponent(
             subject
-        )}&body=${encodeURIComponent(textToShare)}`;
+        )}&body=${encodeURIComponent(url)}`;
         window.location.href = mailtoLink;
         setShareOptionsDisplayed(!shareOptionsDisplayed);
     };
 
     const handleWhatsAppShare = () => {
-        const whatsappLink = `https://wa.me/?text=${encodeURIComponent(textToShare)}`;
+        const url = window.location.href;
+        const whatsappLink = `https://wa.me/?text=${encodeURIComponent(url)}`;
         window.open(whatsappLink, "_blank");
         setShareOptionsDisplayed(!shareOptionsDisplayed);
     };

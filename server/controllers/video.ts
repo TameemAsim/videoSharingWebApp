@@ -15,14 +15,11 @@ const addVideoBodySchema = z.object({
     channelName: z.string().min(1),
     title: z.string().min(1),
     description: z.string().min(1),
-    thumbnailUrl: z.string().min(1),
+    thumbnailURL: z.string().min(1),
     thumbnailName: z.string().min(1),
     videoURL: z.string().min(1),
     videoName: z.string().min(1),
-    views: z.number().optional(),
-    tags: z.array(z.string()).optional(),
-    likes: z.array(z.string()).optional(),
-    dislikes: z.array(z.string()).optional()
+    tags: z.array(z.string()).min(1)
 })
 
 type AddVideoBody = z.infer<typeof addVideoBodySchema>;
@@ -47,10 +44,10 @@ export const addVideo = async (req: ReqWithUser, res: Response, next: NextFuncti
         const body: AddVideoBody = addVideoBodySchema.parse(req.body);
         const newVideo = new Video({userId: req.user.id, ...body});
         const savedVideo = await newVideo.save();
-        res.status(200).json(savedVideo);
+        res.status(200).json({savedViseo: savedVideo});
     }catch (err){
         if (err instanceof z.ZodError) {
-            res.json(err.issues[0].message);
+            res.json({zodeError: err.issues[0].message});
             return;
         }
         next(err);

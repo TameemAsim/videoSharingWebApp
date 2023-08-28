@@ -9,7 +9,13 @@ import cookieParser from "cookie-parser";
 import errorHandler from "./middlewares/errorHandler.js";
 import cors from 'cors';
 import { error } from "console";
+import path from "path";
+import { fileURLToPath } from "url";
 
+
+const __filename = fileURLToPath(import.meta.url);
+const dir1 = path.dirname(__filename);
+const __dirname = path.dirname(dir1);
 
 const app = express();
 dotenv.config();
@@ -26,19 +32,24 @@ const connect = ()=>{
 }
 connect();
 
-app.use(cors({
-    origin: true,
-    credentials: true
-}));
+// app.use(cors({
+//     origin: true,
+//     credentials: true
+// }));
 app.use(express.json());
 app.use(cookieParser());
-app.get('/', (req, res) => {
-    res.send('Welcome!');
-})
+
+// app.get('/', (req, res) => {
+//     res.send('Welcome!');
+// })
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/videos', videoRoutes);
 app.use('/api/comments', commentRoutes);
+app.use(express.static("public"));
+app.get('/*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/index.html'));
+});
 
 // Error Handler
 app.use(errorHandler);

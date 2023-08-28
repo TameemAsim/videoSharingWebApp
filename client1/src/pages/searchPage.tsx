@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Axios, { isAxiosError } from 'axios';
 import Home from '../components/Major Components/home';
 import { useParams } from 'react-router-dom';
+import proxy from '../proxy';
 
 
 export default function SearchPage() {
@@ -12,7 +13,7 @@ export default function SearchPage() {
         const fetchVideos = async () => {
             try {
                 console.log(query);
-                const response = await Axios.get(`/videos/search?q=${query}`);
+                const response = await Axios.get(`${proxy}/videos/search?q=${query}`);
                 if(response) {
                     setVideos(response.data);
                 }

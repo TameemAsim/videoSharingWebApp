@@ -14,6 +14,8 @@ export default function MyAccount() {
     useEffect(() => {
         if (!Cookies.get('access_token')) {
             navigate('/signIn');
+        }else {
+            console.log(userLoggedIn);
         }
     }, [])
 

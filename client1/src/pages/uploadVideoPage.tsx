@@ -7,6 +7,7 @@ import { ref, uploadBytesResumable, getDownloadURL, deleteObject, } from "fireba
 import { useRecoilState } from 'recoil';
 import { user, userVideos } from '../recoil/atoms';
 import UploadVideo from "../components/Major Components/uploadVideo";
+import proxy from '../proxy';
 
 export interface VideoForUploadVideo {
     title: string;
@@ -75,7 +76,7 @@ export default function UploadVideoPage() {
                     setVideoData(prevValues => {
                         const newVideoData = {
                             ...prevValues,
-                            thumbnailURL: url,
+                            thumbnailURL: url.toString(),
                             thumbnailName: file.name
                         }
                         return newVideoData;
@@ -117,7 +118,7 @@ export default function UploadVideoPage() {
                     setVideoData(prevValues => {
                         const newVideoData = {
                             ...prevValues,
-                            videoURL: url,
+                            videoURL: url.toString(),
                             videoName: file.name
                         }
                         return newVideoData;
@@ -135,14 +136,19 @@ export default function UploadVideoPage() {
             console.log(videoData);
         } else {
                 try{
-                    const response = await Axios.post('/videos/', {channelName: userLoggedIn.username, ...videoData}, {withCredentials: true});
+                    const response = await Axios.post(`${proxy}/videos/`, {channelName: userLoggedIn.username, ...videoData}, {withCredentials: true});
                     if(response) {
-                        setUserLoggedInVideos(prevValues => {
-                            const updatedUserVideos = [...prevValues, response.data];
-                            return updatedUserVideos;
-                        });
-                        alert('Video Uploaded Successfully...');
-                        navigate('/');
+                        if(response.status !== 200){
+                            console.log(response.data);
+                        }else {
+                            setUserLoggedInVideos(prevValues => {
+                                const updatedUserVideos = [...prevValues, response.data.savedVideo];
+                                return updatedUserVideos;
+                            });
+                            alert('Video Uploaded Successfully...');
+                            navigate('/');
+                        }
+                        
                     }
                 }catch(err) {
                     if(isAxiosError(err)) {

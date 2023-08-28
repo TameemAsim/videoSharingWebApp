@@ -7,6 +7,7 @@ import { userVideos } from "../recoil/atoms";
 import Axios, { isAxiosError } from "axios";
 import { storage } from '../firebase';
 import { ref, uploadBytesResumable, getDownloadURL, deleteObject } from 'firebase/storage';
+import proxy from "../proxy";
 
 export interface VideoForUpdateVideo {
     title: string;
@@ -40,7 +41,7 @@ export default function UpdateVideoPage() {
         if (Cookies.get('access_token')) {
             const fetchVideo = async () => {
                 try {
-                    const video = await Axios.get(`/videos/find/${videoId}`);
+                    const video = await Axios.get(`${proxy}/videos/find/${videoId}`);
                     if (video) {
                         setVideo(video.data);
                     }
@@ -164,7 +165,7 @@ export default function UpdateVideoPage() {
             console.log(video);
         } else {
             try {
-                const response = await Axios.put(`/videos/${videoId}`, video, { withCredentials: true });
+                const response = await Axios.put(`${proxy}/videos/${videoId}`, video, { withCredentials: true });
                 if (response) {
                     setUserLoggedInVideos(prevValues => {
                         const previousVideos = [...prevValues];

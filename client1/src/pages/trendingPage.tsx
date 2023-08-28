@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Axios, { isAxiosError } from 'axios';
 import Home from '../components/Major Components/home';
+import proxy from '../proxy';
 
 
 export default function TrendingVideosPage() {
@@ -9,7 +10,7 @@ export default function TrendingVideosPage() {
     useEffect(() => {
         const fetchVideos = async () => {
             try {
-                const response = await Axios.get('/videos/trend');
+                const response = await Axios.get(`${proxy}/videos/trend`);
                 if(response) {
                     setVideos(response.data);
                 }

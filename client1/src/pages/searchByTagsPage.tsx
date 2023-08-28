@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Axios, { isAxiosError } from 'axios';
 import Home from '../components/Major Components/home';
 import { useParams } from 'react-router-dom';
+import proxy from '../proxy';
 
 
 export default function SearchByTagsPage() {
@@ -11,7 +12,7 @@ export default function SearchByTagsPage() {
     useEffect(() => {
         const fetchVideos = async () => {
             try {
-                const response = await Axios.get(`/videos/tags?tag=${tag}`);
+                const response = await Axios.get(`${proxy}/videos/tags?tag=${tag}`);
                 if(response) {
                     setVideos(response.data);
                 }

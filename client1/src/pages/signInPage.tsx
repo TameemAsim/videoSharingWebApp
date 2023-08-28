@@ -5,6 +5,7 @@ import Axios, { isAxiosError } from 'axios';
 import { useRecoilState } from "recoil";
 import { user, userVideos } from "../recoil/atoms";
 import SignInComponent from "../components/Major Components/signInComponent";
+import proxy from "../proxy";
 
 export default function SignInPage() {
     const [userLoggedIn, setUserLoggedIn] = useRecoilState(user);
@@ -32,12 +33,12 @@ export default function SignInPage() {
     async function handleLogin(ev: React.MouseEvent) {
         ev.preventDefault();
         try {
-            const response = await Axios.post('/auth/signin', { username, password }, { withCredentials: true });
+            const response = await Axios.post(`${proxy}/auth/signin`, { username, password }, { withCredentials: true });
             if (response) {
                 if (response.status === 201) {
                     setUserLoggedIn(response.data);
                     console.log(response.data);
-                    const videoResponse = await Axios.get(`/videos/allVideos/${response.data._id}`, {withCredentials: true});
+                    const videoResponse = await Axios.get(`${proxy}/videos/allVideos/${response.data._id}`, {withCredentials: true});
                     if(videoResponse) {
                         setUserLoggedInVideos(videoResponse.data);
                         navigate('/');
