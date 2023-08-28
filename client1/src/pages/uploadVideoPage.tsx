@@ -3,7 +3,7 @@ import Cookies from 'js-cookie';
 import Axios, { isAxiosError } from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { storage } from "../firebase";
-import { ref, uploadBytesResumable, getDownloadURL, deleteObject, } from "firebase/storage";
+import { ref, uploadBytesResumable, getDownloadURL, deleteObject, getMetadata } from "firebase/storage";
 import { useRecoilState } from 'recoil';
 import { user, userVideos } from '../recoil/atoms';
 import UploadVideo from "../components/Major Components/uploadVideo";
@@ -48,8 +48,29 @@ export default function UploadVideoPage() {
     // upload thumbnail to storage
     async function uploadThumbnail(file: File) {
 
+        async function checkFileExists(fileName: string): Promise<boolean> {
+            const storageRef = ref(storage, `/files/${fileName}`);
+            try {
+                const metadata = await getMetadata(storageRef);
+                // If metadata exists, the file already exists
+                return metadata !== null;
+            } catch (error: any) {
+                if (error.code === 'storage/object-not-found') {
+                    // File does not exist
+                    return false;
+                }
+                throw error; // Handle other errors
+            }
+        }
+
         if (!file) {
             alert("Please upload an image first!");
+        }
+
+        const isFileExists = await checkFileExists(file.name);
+        if (isFileExists) {
+            alert("This file already exists in our database. Kindly change the name  slightly because duplicate content is not allowed.");
+            return;
         }
 
         const storageRef = ref(storage, `/files/${file.name}`);
@@ -89,9 +110,29 @@ export default function UploadVideoPage() {
 
     // upload video to storage
     async function uploadVideo(file: File) {
+        async function checkFileExists(fileName: string): Promise<boolean> {
+            const storageRef = ref(storage, `/files/${fileName}`);
+            try {
+                const metadata = await getMetadata(storageRef);
+                // If metadata exists, the file already exists
+                return metadata !== null;
+            } catch (error: any) {
+                if (error.code === 'storage/object-not-found') {
+                    // File does not exist
+                    return false;
+                }
+                throw error; // Handle other errors
+            }
+        }
 
         if (!file) {
-            alert("Please upload an image first!");
+            alert("Please upload an video file first!");
+        }
+
+        const isFileExists = await checkFileExists(file.name);
+        if (isFileExists) {
+            alert("This file already exists in our database. Kindly change name slightly because duplicate content is not allowed.");
+            return;
         }
 
         const storageRef = ref(storage, `/files/${file.name}`);
