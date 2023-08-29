@@ -8,7 +8,7 @@ import { z } from "zod";
 interface ReqWithUser extends Request {
     user?: {
         id: string
-    }
+    }//
 }
 
 const updateUserBodySchema = z.object({
