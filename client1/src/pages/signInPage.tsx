@@ -38,11 +38,7 @@ export default function SignInPage() {
                 if (response.status === 201) {
                     setUserLoggedIn(response.data);
                     console.log(response.data);
-                    const videoResponse = await Axios.get(`${proxy}/videos/allVideos/${response.data._id}`, {withCredentials: true});
-                    if(videoResponse) {
-                        setUserLoggedInVideos(videoResponse.data);
-                        navigate('/');
-                    }
+                    navigate('/');
                 }else {
                     alert(response.data);
                 }
@@ -51,13 +47,7 @@ export default function SignInPage() {
         } catch (err) {
             if(isAxiosError(err)) {
                 if (err.response) {
-                    // The request was made and the server responded with an error status code
-                    if(err.response.data.message === 'No video Found...') {
-                        setUserLoggedInVideos([]);
-                        navigate('/');
-                    }else {
-                        alert(err.response.data.message);
-                    }
+                    alert(err.response.data.message);
                 } else if (err.request) {
                     // The request was made but no response was received
                     alert('Request failed. Please try again later.');
