@@ -1,48 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
-import { user, userVideos } from "../../recoil/atoms";
+import { user } from "../../recoil/atoms";
 import Cookies from "js-cookie";
 import Header from "../layout/header";
 import MyAccountTabs from "../layout/myAccountTabs";
-import Axios, { isAxiosError } from 'axios';
-import proxy from "../../proxy";
 
 export default function MyAccount() {
     const [userLoggedIn, setUserLoggedIn] = useRecoilState(user);
-    const [userLoggedInVideos, setUserLoggedInVideos] = useRecoilState(userVideos);
     const navigate = useNavigate();
 
 
     useEffect(() => {
-        const fetchUserVideos = async () => {
-            try {
-                const videoResponse = await Axios.get(`${proxy}/videos/allVideos/${userLoggedIn._id}`, {withCredentials: true});
-                    if(videoResponse) {
-                        setUserLoggedInVideos(videoResponse.data);
-                    }
-            } catch (err) {
-                if(isAxiosError(err)) {
-                    if (err.response) {
-                        alert(err.response.data.message);
-                    } else if (err.request) {
-                        // The request was made but no response was received
-                        alert('Request failed. Please try again later.');
-                    } else {
-                        // Something happened in setting up the request that triggered an Error
-                        alert('An error occurred. Please try again later.');
-                    }
-                }else {
-                    alert('An unknown error occured...');
-                }
-            }
-        }
-
         if (!Cookies.get('access_token')) {
             navigate('/signIn');
         }else {
             console.log(userLoggedIn);
-            
         }
     }, [])
 
