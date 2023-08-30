@@ -183,7 +183,7 @@ export default function UploadVideoPage() {
                             console.log(response.data);
                         }else {
                             setUserLoggedInVideos(prevValues => {
-                                const updatedUserVideos = [...prevValues, response.data.savedVideo];
+                                const updatedUserVideos = [...prevValues, response.data];
                                 return updatedUserVideos;
                             });
                             alert('Video Uploaded Successfully...');
