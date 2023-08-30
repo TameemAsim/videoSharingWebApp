@@ -44,7 +44,7 @@ export const addVideo = async (req: ReqWithUser, res: Response, next: NextFuncti
         const body: AddVideoBody = addVideoBodySchema.parse(req.body);
         const newVideo = new Video({userId: req.user.id, ...body});
         const savedVideo = await newVideo.save();
-        res.status(200).json({savedViseo: savedVideo});
+        res.status(200).json(savedVideo);
     }catch (err){
         if (err instanceof z.ZodError) {
             res.json({zodeError: err.issues[0].message});

@@ -38,7 +38,7 @@ export const addVideo = (req, res, next) => __awaiter(void 0, void 0, void 0, fu
         const body = addVideoBodySchema.parse(req.body);
         const newVideo = new Video(Object.assign({ userId: req.user.id }, body));
         const savedVideo = yield newVideo.save();
-        res.status(200).json({ savedViseo: savedVideo });
+        res.status(200).json(savedVideo);
     }
     catch (err) {
         if (err instanceof z.ZodError) {
