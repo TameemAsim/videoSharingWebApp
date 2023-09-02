@@ -17,6 +17,7 @@ export default function Header() {
 
     return (
         <div>
+        <h1 className="text-center text-white bg-black text-md font-mono">Open for contribution: <a className="text-red-500 underline" href="https://github.com/18feb06/videoSharingWebApp">Click Here</a></h1>
             {/* tablet & laptop */}
             <div className='flex flex-row sm:hidden md:flex'>
                 <Sidebar />
