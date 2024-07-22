@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "cd ../client1 && npm run build && rm -rf ../server/public && mkdir -p ../server/public && mv ./build/* ../server/public && cd ../server && node dist/server.js",
+    "start": "tsc && cd ../client1 && npm run build && cd ../server && node dist/server.js",
     "make_ready_for_pm2": "cd ../client1 && npm run build && rm -rf ../server/public && mkdir -p ../server/public && mv ./build/* ../server/public && cd ../server"
   },
   "author": "Tameem Asim",

@@ -37,13 +37,15 @@ app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
 
+app.use(express.static(path.join(__dirname, '../client1/build')));
+
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/videos', videoRoutes);
 app.use('/api/comments', commentRoutes);
 app.use(express.static("public"));
 app.get('/*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public/index.html'));
+    res.sendFile(path.join(__dirname, '../client1/build/index.html'));
 });
 
 

@@ -1,2 +1,2 @@
-const proxy: string = 'https://videoSharingWebApp.tameem.live/api';
+const proxy: string = 'http://localhost:5000/api';
 export default proxy;
